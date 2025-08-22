@@ -1,0 +1,18 @@
+{% extends 'base1.html' %}
+{% block content %}
+<h2>Manage Active Menu</h2>
+<form method="POST">
+    {% csrf_token %}
+    <div style="text-align:left; display:inline-block;">
+        {% for item in menu_choices %}
+            <label>
+                <input type="checkbox" name="menu_items" value="{{ item }}" {% if item in current_menu %}checked{% endif %}>
+                {{ item }}
+            </label><br>
+        {% endfor %}
+    </div>
+    <br>
+    <input type="submit" value="Update Menu">
+</form>
+<h3 style="color:green;">{{ msg }}</h3>
+{% endblock %}

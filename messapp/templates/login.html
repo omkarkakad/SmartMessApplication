@@ -1,0 +1,15 @@
+{%  extends 'base.html'  %}
+{%  block content  %}
+	<h1>Doctor's Login page </h1>
+	<form method="POST">
+	{%  csrf_token  %}
+	<input type="text" name=un placeholder="Enter Username" required/>
+	
+	<input type="password" name=pw placeholder="Enter password" required/>
+	
+	<input type="submit" value="Login"/>
+	<h3 style="color: red; font-size: 20px; text-align: center;"> Signup if you are a new user</h3>
+	</form>
+	<h1>  {{   msg   }}  </h1>
+
+{%  endblock  %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Welcome {{ user.username }}</h2>
+
+<h3>Place Your Order</h3>
+<form method="POST">
+    {% csrf_token %}
+    <h4>Note: The Name and Surname you provide for your first order will be automatically carried forward for every order.</h4>
+
+    <div id="name-fields">
+        <label for="id_name">Name:</label>
+        {{ form.name }}
+        <button type="button" onclick="enableNameEdit()">✏️ Edit</button><br><br>
+
+        <label for="id_surname">Surname:</label>
+        {{ form.surname }}
+        <button type="button" onclick="enableSurnameEdit()">✏️ Edit</button><br><br>
+    </div>
+
+    {% for field in form %}
+        {% if field.name not in 'name surname' %}
+            <p>{{ field.label_tag }} {{ field }}</p>
+        {% endif %}
+    {% endfor %}
+
+    <input type="hidden" name="edit_mode" id="editMode" value="false">
+    <input type="submit" value="Submit Order">
+</form>
+
+<h2>{{ msg }}</h2>
+
+<script>
+function enableNameEdit() {
+    const nameField = document.getElementById("id_name");
+    nameField.removeAttribute("readonly");
+    document.getElementById("editMode").value = "true";
+}
+
+function enableSurnameEdit() {
+    const surnameField = document.getElementById("id_surname");
+    surnameField.removeAttribute("readonly");
+    document.getElementById("editMode").value = "true";
+}
+</script>
+{% endblock %}

@@ -1,0 +1,169 @@
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <!-- Professional CSS for base.html, base1.html, admindashboard.html, adminlogin.html -->
+<style>
+    *{font-size:20px;}
+    body {
+        background: linear-gradient(135deg, #A97DC9 0%, #fff 100%);
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+        color: #222;
+    }
+    .nav {
+        background: #222;
+        padding: 18px 0;
+        border-radius: 0 0 18px 18px;
+        box-shadow: 0 2px 8px rgba(169, 125, 201, 0.15);
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+    }
+    .nav a {
+        color: #A97DC9;
+        text-decoration: none;
+        font-size: 1.3rem;
+        font-weight: 600;
+        padding: 8px 18px;
+        border-radius: 8px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .nav a:hover {
+        background: #A97DC9;
+        color: #fff;
+    }
+    h1, h2 {
+        color: #222;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-top: 32px;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+    h2 {
+        background: #A97DC9;
+        color: #fff;
+        border-radius: 18px;
+        padding: 12px 0;
+        width: 60%;
+        margin: 32px auto 18px auto;
+        box-shadow: 0 2px 8px rgba(169, 125, 201, 0.12);
+    }
+    form {
+        background: #fff;
+        padding: 32px 28px;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(169, 125, 201, 0.13);
+        max-width: 500px;
+        margin: 32px auto;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+    input[type="text"], input[type="tel"],input[type="email"], input[type="password"], textarea, select {
+        border: 1.5px solid #A97DC9;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 1.1rem;
+        background: #f7f4fa;
+        transition: border 0.2s;
+        outline: none;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+        border-color: #222;
+    }
+    button, input[type="submit"] {
+        background: #A97DC9;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 0;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 8px;
+    }
+    button:hover, input[type="submit"]:hover {
+        background: #222;
+        color: #A97DC9;
+    }
+    table {
+        width: 90%;
+        margin: 32px auto;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(169, 125, 201, 0.13);
+        overflow: hidden;
+    }
+    th, td {
+        padding: 16px 12px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        font-size: 1.05rem;
+    }
+    th {
+        background: #A97DC9;
+        color: #fff;
+        font-weight: 600;
+        border-bottom: 2px solid #fff;
+    }
+    tr:last-child td {
+        border-bottom: none;
+    }
+    a.delete-link {
+        color: #fff;
+        background: #e74c3c;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    a.delete-link:hover {
+        background: #c0392b;
+    }
+    .msg-success {
+        color: #A97DC9;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-top: 18px;
+        font-weight: 500;
+    }
+    @media (max-width: 700px) {
+        .nav { flex-direction: column; gap: 12px; }
+        h2 { width: 90%; font-size: 1.2rem; }
+        table, form { width: 98%; }
+        th, td { font-size: 0.95rem; padding: 8px 6px; }
+    }
+</style>
+</head>
+<body>
+<center>
+<div class="nav">
+	{%  if user.is_authenticated  %}
+	<a href="{%   url  'adminlogout'   %}"> Logout </a>
+	<a href="{%   url  'admincp'   %}"> Change Password </a>
+	<a href="{% url 'aboutus' %}">About Us</a>
+	{% else  %}
+	<a href="{%   url  'adminlogin'   %}"> Admin Login </a>
+ 	<a href="{%   url  'ulogin'   %}"> User Login </a> 
+	<a href="{% url 'aboutus' %}">About Us</a>
+	{%  endif%}
+
+</div>
+	<h1>Admin's Login page </h1>
+	<form method="POST">
+	{%  csrf_token  %}
+	<input type="text" name=un placeholder="Enter Username" required/>
+	
+	<input type="password" name=pw placeholder="Enter password" required/>
+	
+	<input type="submit" value="Login"/>
+	</form>
+	<h1>  {{   msg   }}  </h1>
+</center>
+</body>
+</html>
