@@ -381,3 +381,79 @@ def aboutus(request):
 
 
 
+
+def chat_page(request):
+	return render(request, "chat.html")
+
+
+@csrf_exempt
+
+def chat_api(request):
+	if request.method != "POST":
+		return JsonResponse({"error": "Only POST allowed"}, status=405)
+	try:
+		payload = json.loads(request.body.decode("utf-8"))
+	except Exception:
+		return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+	messages = payload.get("messages", [])
+
+	# Build lightweight context from DB
+	try:
+		active_menu = ActiveMenu.objects.latest('updated_at')
+		menu_items = active_menu.menu_items
+	except ActiveMenu.DoesNotExist:
+		menu_items = [item[0] for item in OrderModel.MENU_CHOICES]
+
+	system_prompt = (
+		"You are a helpful assistant for a mess ordering app. "
+		"Answer questions about available items, ordering flow, accounts, and payments. "
+		"If you do not know something like opening hours or prices, say you don't know. "
+		f"Current available items: {', '.join(menu_items)}. "
+		"Keep answers concise and friendly."
+	)
+
+	# Prefer OpenAI if configured
+	import os
+	api_key = os.environ.get("OPENAI_API_KEY")
+	model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+
+	if api_key:
+		# Try using OpenAI SDK; if unavailable, fall back
+		try:
+			from openai import OpenAI
+			client = OpenAI(api_key=api_key)
+			chat_messages = [{"role":"system","content":system_prompt}] + [
+				{"role": m.get("role","user"), "content": m.get("content","" )} for m in messages
+			]
+			resp = client.chat.completions.create(model=model, messages=chat_messages, temperature=0.2)
+			answer = resp.choices[0].message.content.strip()
+			return JsonResponse({"answer": answer})
+		except Exception as e:
+			# Fall back to simple rule-based reply
+			pass
+
+	# Rule-based fallback
+	user_text = " ".join([m.get("content","") for m in messages if m.get("role") == "user"]).lower()
+	if any(k in user_text for k in ["menu", "available", "items", "today"]):
+		return JsonResponse({"answer": "Currently available items: " + ", ".join(menu_items)})
+	if any(k in user_text for k in ["order", "how to", "place"]):
+		return JsonResponse({"answer": "Login, go to Home, select items and quantities, choose place, then submit. "
+							 "You can view/update your details in Change Password if needed."})
+	if any(k in user_text for k in ["price", "cost", "rate"]):
+		return JsonResponse({"answer": "Prices may vary. Please check with admin or during checkout."})
+	if any(k in user_text for k in ["pay", "payment", "paid"]):
+		return JsonResponse({"answer": "You can mark orders as Paid or Not Paid during ordering. Admin reviews payments."})
+	return JsonResponse({"answer": "I can help with available items, ordering steps, account and payments. What would you like to know?"})
+
+
+
+
+
+
+
+
+
+
+
+

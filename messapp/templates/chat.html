@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h2>Ask a question about the mess</h2>
+<div id="chat-container" style="width:90%;max-width:800px;background:#fff;border-radius:18px;box-shadow:0 2px 16px rgba(169,125,201,0.13);margin:20px auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
+	<div id="messages" style="height:360px;overflow:auto;padding:8px;border:1px solid #eee;border-radius:12px;background:#f7f4fa;"></div>
+	<div style="display:flex;gap:8px;">
+		<input id="user-input" type="text" placeholder="Type your question..." style="flex:1;padding:10px;border:1.5px solid #A97DC9;border-radius:8px;background:#f7f4fa;" />
+		<button id="send-btn">Send</button>
+	</div>
+</div>
+<script>
+(function(){
+	const messagesEl = document.getElementById('messages');
+	const inputEl = document.getElementById('user-input');
+	const sendBtn = document.getElementById('send-btn');
+	const history = [];
+	function append(role, text){
+		const bubble = document.createElement('div');
+		bubble.style.margin = '6px 0';
+		bubble.style.padding = '10px 12px';
+		bubble.style.borderRadius = '10px';
+		bubble.style.maxWidth = '85%';
+		bubble.style.whiteSpace = 'pre-wrap';
+		bubble.style.lineHeight = '1.3';
+		if(role === 'user'){
+			bubble.style.alignSelf = 'flex-end';
+			bubble.style.background = '#A97DC9';
+			bubble.style.color = '#fff';
+		} else {
+			bubble.style.alignSelf = 'flex-start';
+			bubble.style.background = '#eee';
+			bubble.style.color = '#222';
+		}
+		bubble.textContent = text;
+		messagesEl.appendChild(bubble);
+		messagesEl.scrollTop = messagesEl.scrollHeight;
+	}
+	async function send(){
+		const q = inputEl.value.trim();
+		if(!q) return;
+		append('user', q);
+		history.push({role:'user', content:q});
+		inputEl.value='';
+		sendBtn.disabled = true;
+		append('assistant', 'Thinking...');
+		try{
+			const res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({messages: history})});
+			const data = await res.json();
+			messagesEl.lastChild.textContent = data.answer || data.error || 'No response';
+			if(data.answer){ history.push({role:'assistant', content:data.answer}); }
+		}catch(err){
+			messagesEl.lastChild.textContent = 'Error contacting chatbot.';
+		}finally{
+			sendBtn.disabled = false;
+		}
+	}
+	sendBtn.addEventListener('click', send);
+	inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') send(); });
+})();
+</script>
+{% endblock %}
