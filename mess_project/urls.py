@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from messapp.views import root_redirect, uhome,ulogin,ulogout,usignup,ucp,adminlogin,admindashboard,adminlogout,admincp,delete_order,auto_admin_logout,manage_menu,aboutus
+from messapp.views import root_redirect, uhome,ulogin,ulogout,usignup,ucp,adminlogin,admindashboard,adminlogout,admincp,delete_order,auto_admin_logout,manage_menu,aboutus,chat_page,chat_api
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", root_redirect),
@@ -17,7 +17,8 @@ urlpatterns = [
     path("auto_admin_logout", auto_admin_logout, name="auto_admin_logout"),
     path("manage_menu", manage_menu, name="manage_menu"),
     path("aboutus", aboutus, name="aboutus"),
-
+    path("chat", chat_page, name="chat"),
+    path("api/chat", chat_api, name="chat_api"),
 
 
 ]

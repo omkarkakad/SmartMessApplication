@@ -156,11 +156,13 @@ label {
 	<a href="{%   url  'ulogout'   %}"> Logout </a>
 	<a href="{%   url  'ucp'   %}"> Change Password </a>
 	<a href="{% url 'aboutus' %}">About Us</a>
+	<a href="{% url 'chat' %}">Chat</a>
 	{% else  %}
 	<a href="{%   url  'ulogin'   %}"> Login </a>
 	<a href="{%   url  'usignup'   %}"> SignUp</a>
 	<a href="{%   url  'adminlogin'   %}"> Admin</a>
 	<a href="{% url 'aboutus' %}">About Us</a>
+	<a href="{% url 'chat' %}">Chat</a>
 	{%  endif%}
 
 </div>
